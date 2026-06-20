@@ -419,38 +419,38 @@ plot_2d_frontier <- function(grid_data, x_var, y_var, outcome_var, exchange_rate
 # ==== TOOLS ====
 
 # SLICE
-svb_x0 |> 
-  select(-c(degrees_c, degrees_d, sets_c, sets_d)) |> 
-  head(10) |> write.csv(file = "slice_svb_x0.csv")
+# svb_x0 |> 
+#   select(-c(degrees_c, degrees_d, sets_c, sets_d)) |> 
+#   head(10) |> write.csv(file = "slice_svb_x0.csv")
 
 # FILTERING TOOL
-svb_x0 |> filter(benefit == 0.2, synergy == 0.66, set_mut == 0.5) |> view()
+# svb_x0 |> filter(benefit == 0.2, synergy == 0.66, set_mut == 0.5) |> view()
 
 # COUNT UNIQUE RUNS
-s_0 |>
-  group_by(set_std, set_mut, dir_exp) |>
-  summarise(number_of_runs = n_distinct(run_number), .groups = 'drop') |> 
-  print()
+# s_0 |>
+#   group_by(set_std, set_mut, dir_exp) |>
+#   summarise(number_of_runs = n_distinct(run_number), .groups = 'drop') |> 
+#   print()
 
 # CHECK PARAMETER VALUES (NEEDS SUMMARIES)
-s_03_summ |>
+s_0_summ |>
   summarise(across(
     c(set_std, trait_mut, set_mut, dir_exp, baseline, set_mean, total_sets, population, b_c_ratio, synergy ), 
     ~ list(unique(.))
   )) |> as.list()
 
 # testing mean of local c freqs equals global c freq
-test |> slice_sample(n = 1) |> 
-  select(c(ifelse_value_any_individuals_with_strategy_cooperator_mean_local_c_freq_of_individuals_with_strategy_cooperator_0,
-           ifelse_value_any_individuals_with_strategy_defector_mean_local_c_freq_of_individuals_with_strategy_defector_0,
-           count_individuals_with_strategy_cooperator_n,
-           n
-  )) |> 
-  mutate(mean_local_c_freq = count_individuals_with_strategy_cooperator_n * 
-           ifelse_value_any_individuals_with_strategy_cooperator_mean_local_c_freq_of_individuals_with_strategy_cooperator_0 + 
-           (1 - count_individuals_with_strategy_cooperator_n) * 
-           ifelse_value_any_individuals_with_strategy_defector_mean_local_c_freq_of_individuals_with_strategy_defector_0) |> 
-  view()
+# test |> slice_sample(n = 1) |> 
+#   select(c(ifelse_value_any_individuals_with_strategy_cooperator_mean_local_c_freq_of_individuals_with_strategy_cooperator_0,
+#            ifelse_value_any_individuals_with_strategy_defector_mean_local_c_freq_of_individuals_with_strategy_defector_0,
+#            count_individuals_with_strategy_cooperator_n,
+#            n
+#   )) |> 
+#   mutate(mean_local_c_freq = count_individuals_with_strategy_cooperator_n * 
+#            ifelse_value_any_individuals_with_strategy_cooperator_mean_local_c_freq_of_individuals_with_strategy_cooperator_0 + 
+#            (1 - count_individuals_with_strategy_cooperator_n) * 
+#            ifelse_value_any_individuals_with_strategy_defector_mean_local_c_freq_of_individuals_with_strategy_defector_0) |> 
+#   view()
 
 # ====
 # ==== LOADING AND CLEANING ====
@@ -493,49 +493,61 @@ s_0.5_summ <- s_0.5_summ |>
   mutate(b_c_ratio = benefit / cost,
          K_M_ratio = set_mean/total_sets,) |> 
   select(-c(cost, benefit))
+
+svb_x0_summ <- read_csv2("svb_x0_summ.csv")
+svb_x1_part_summ <- read_csv2("svb_x1_part.csv")
+svb_x1_ext_summ <- read_csv2("svb_x1_ext_summ.csv")
+svb_x1_summ <- read_csv2("svb_x1_summ.csv")
+svb_x0_v0_summ <- read_csv2("svb_x0_v0_summ.csv")
+svb_x0_v0.25_summ <- read_csv2("svb_x0_v0.25_summ.csv")
+svb_x0_v0.5_summ <- read_csv2("svb_x0_v0.5_summ.csv")
+svb_x1_v0.25_summ <- read_csv2("svb_x1_v0.25_summ.csv")
+svb_x1_v0.5_summ <- read_csv2("svb_x1_v0.5_summ.csv")
+mvk_summ <- read_csv2("mvk_summ.csv")
+s_0_summ <- read_csv2("s_0_summ.csv")
+s_0.5_summ <- read_csv2("s_0.5_summ.csv")
+s_1_summ <- read_csv2("s_1_summ.csv")
  
 
 # ====
 # ==== CREATING SUMMARIES ====
 
-svb_x0_part_summ <- svb_x0 |> run_summary()
-svb_x0_ext_summ <- svb_ext |> filter(dir_exp == 0) |> run_summary()
-svb_x0_summ <- bind_rows(svb_x0_part_summ, svb_x0_ext_summ)
-
-svb_x1_part <- svb_x1 |> run_summary()
-svb_x1_ext_summ <- svb_ext |> filter(dir_exp == 1) |> run_summary()
-svb_x1_summ <- bind_rows(svb_x1_part, svb_x1_ext_summ)
-
+# svb_x0_part_summ <- svb_x0 |> run_summary()
+# svb_x0_ext_summ <- svb_ext |> filter(dir_exp == 0) |> run_summary()
+# svb_x0_summ <- bind_rows(svb_x0_part_summ, svb_x0_ext_summ)
+# 
+# svb_x1_part <- svb_x1 |> run_summary()
+# svb_x1_ext_summ <- svb_ext |> filter(dir_exp == 1) |> run_summary()
+# svb_x1_summ <- bind_rows(svb_x1_part, svb_x1_ext_summ)
+# 
 svb_x0_v0_summ <- svb_x0_summ |> filter(set_mut == 0)
 svb_x0_v0.25_summ <- svb_x0_summ |> filter(set_mut == 0.25)
 svb_x0_v0.5_summ <- svb_x0_summ |> filter(set_mut == 0.5)
-
-svb_x1_v0.25_summ <- svb_x1_summ |> filter(set_mut == 0.25)
-svb_x1_v0.5_summ <- svb_x1_summ |> filter(set_mut == 0.5)
+# 
+# svb_x1_v0.25_summ <- svb_x1_summ |> filter(set_mut == 0.25)
+# svb_x1_v0.5_summ <- svb_x1_summ |> filter(set_mut == 0.5)
 
 # test_summ <- test |> run_summary()
-
-mvk_summ <- mvk |> run_summary()
-s_0_summ <- s_0 |> run_summary()
-s_0.5_summ <- s_0.5 |> run_summary()
-s_1_summ <- s_1 |> run_summary()
+# 
+# mvk_summ <- mvk |> run_summary()
+# s_0_summ <- s_0 |> run_summary()
+# s_0.5_summ <- s_0.5 |> run_summary()
+# s_1_summ <- s_1 |> run_summary()
 
 # Write objects to csv2
-write_csv2(svb_x0_part_summ, "svb_x0_part_summ.csv")
-write_csv2(svb_x0_ext_summ, "svb_x0_ext_summ.csv")
-write_csv2(svb_x0_summ, "svb_x0_summ.csv")
-write_csv2(svb_x1_part, "svb_x1_part.csv")
-write_csv2(svb_x1_ext_summ, "svb_x1_ext_summ.csv")
-write_csv2(svb_x1_summ, "svb_x1_summ.csv")
-write_csv2(svb_x0_v0_summ, "svb_x0_v0_summ.csv")
-write_csv2(svb_x0_v0.25_summ, "svb_x0_v0.25_summ.csv")
-write_csv2(svb_x0_v0.5_summ, "svb_x0_v0.5_summ.csv")
-write_csv2(svb_x1_v0.25_summ, "svb_x1_v0.25_summ.csv")
-write_csv2(svb_x1_v0.5_summ, "svb_x1_v0.5_summ.csv")
-write_csv2(mvk_summ, "mvk_summ.csv")
-write_csv2(s_0_summ, "s_0_summ.csv")
-write_csv2(s_0.5_summ, "s_0.5_summ.csv")
-write_csv2(s_1_summ, "s_1_summ.csv")
+# write_csv2(svb_x0_summ, "svb_x0_summ.csv")
+# write_csv2(svb_x1_part, "svb_x1_part.csv")
+# write_csv2(svb_x1_ext_summ, "svb_x1_ext_summ.csv")
+# write_csv2(svb_x1_summ, "svb_x1_summ.csv")
+# write_csv2(svb_x0_v0_summ, "svb_x0_v0_summ.csv")
+# write_csv2(svb_x0_v0.25_summ, "svb_x0_v0.25_summ.csv")
+# write_csv2(svb_x0_v0.5_summ, "svb_x0_v0.5_summ.csv")
+# write_csv2(svb_x1_v0.25_summ, "svb_x1_v0.25_summ.csv")
+# write_csv2(svb_x1_v0.5_summ, "svb_x1_v0.5_summ.csv")
+# write_csv2(mvk_summ, "mvk_summ.csv")
+# write_csv2(s_0_summ, "s_0_summ.csv")
+# write_csv2(s_0.5_summ, "s_0.5_summ.csv")
+# write_csv2(s_1_summ, "s_1_summ.csv")
 
 # ====
 # ==== RANDOM FOREST VIP ====
@@ -860,6 +872,27 @@ ggsave("s_1_KM_vs_benefit.png")
 
 # ====
 # ==== 2D LOESS - synergy vs b/c ratio ====
+svb_v0_loess2d <- generate_loess_grid(
+  data = svb_x0_v0_summ,
+  x_var = "synergy",
+  y_var = "b_c_ratio",
+  outcome = "coop_success"
+)
+
+svb_v0.25_loess2d <- generate_loess_grid(
+  data = svb_x0_v0.25_summ,
+  x_var = "synergy",
+  y_var = "b_c_ratio",
+  outcome = "coop_success"
+)
+
+svb_v0.5_loess2d <- generate_loess_grid(
+  data = svb_x0_v0.5_summ,
+  x_var = "synergy",
+  y_var = "b_c_ratio",
+  outcome = "coop_success"
+)
+
 # 1. Tag each existing grid with its specific mutation rate
 svb_v0_loess2d$set_mut <- 0
 svb_v0.25_loess2d$set_mut <- 0.25
@@ -1190,325 +1223,325 @@ ggplot(faceted_grid, aes(x = K_M_ratio, y = b_c_ratio)) +
 ggsave("faceted_km_vs_bc_loess2d_s1.png", width = 16, height = 5) # Increased width for horizontal facets
 # ====
 # ====
-# ==== SUCCESS HEATMAP ====
-
-# # # # # # # # # # # # # # # # # # # # # # # # #
-# SYNERGY VS BENEFIT WITHOUT DIRECTED EXPLORATION
-# # # # # # # # # # # # # # # # # # # # # # # # #
-
-svb_x0_heatmap <- svb_x0_summ |>
-  group_by(synergy, benefit, set_mut) |>
-  summarise(
-    avg_success = mean(coop_success, na.rm = TRUE),
-    avg_bounce = mean(bounce_back, na.rm = TRUE),
-    .groups = "drop"
-  )
-
-phase_space(svb_heatmap, synergy, benefit, set_mut, avg_success, avg_bounce,
-            plot_title = "Cooperation Success Phase Space",
-            plot_subtitle = "Tile color indicates average success. Circle size indicates volatility.",
-            x_label = "Synergy (s)",
-            y_label = "Benefit (b)",
-            fill_label = "Coop Success",
-            size_label = "Volatility")
-ggsave("Graphs/svb_x0_heatmap.png", width = 8, height = 6, dpi = 300)
-
-# # # # # # # # # # # # # # # # # # # # # # # #
-# SYNERGY VS BENEFIT WITH DIRECTED EXPLORATION
-# # # # # # # # # # # # # # # # # # # # # # # # 
-
-svb_x1_heatmap <- svb_x1_summ |>
-  # Average multiple runs for each parameter combination
-  group_by(synergy, benefit, set_mut) |>
-  summarise(
-    avg_success = mean(coop_success, na.rm = TRUE),
-    avg_bounce = mean(bounce_back, na.rm = TRUE),
-    .groups = "drop"
-  )
-
-phase_space(svb_heatmap, synergy, benefit, avg_success, avg_bounce)
-ggsave("Graphs/svb_x1_heatmap.png", width = 8, height = 6, dpi = 300)
-
-# # # # # # # # # # # # # # # # # #
-# TOTAL SET NUMBER VERSUS SET MEAN
-# # # # # # # # # # # # # # # # # #
-
-# NO TRAIT MUTATION, NO DIRECTED EXPLORATION
-mvk_heatmap <- mvk_summ |>
-  filter(trait_mut == 0, dir_exp == 0) |> 
-  # Average multiple runs for each parameter combination
-  group_by(total_sets, set_mean, set_mut) |>
-  summarise(
-    avg_success = mean(coop_success, na.rm = TRUE),
-    avg_bounce = mean(bounce_back, na.rm = TRUE),
-    .groups = "drop"
-  )
-
-phase_space(mvk_heatmap, total_sets, set_mean, set_mut, , avg_success, avg_bounce,
-            plot_title = "Cooperation Success Phase Space",
-            plot_subtitle = "Tile color indicates average success. Circle size indicates volatility.",
-            x_label = "Total sets (M)",
-            y_label = "Set mean (K)",
-            fill_label = "Coop Success",
-            size_label = "Volatility")
-ggsave("Graphs/mvk_u0_x0_heatmap.png", width = 8, height = 6, dpi = 300)
-
-# NO TRAIT MUTATION, DIRECTED EXPLORATION
-mvk_heatmap <- mvk_summ |>
-  filter(trait_mut == 0, dir_exp == 1) |> 
-  # Average multiple runs for each parameter combination
-  group_by(total_sets, set_mean, set_mut) |>
-  summarise(
-    avg_success = mean(coop_success, na.rm = TRUE),
-    avg_bounce = mean(bounce_back, na.rm = TRUE),
-    .groups = "drop"
-  )
-
-phase_space(mvk_heatmap, total_sets, set_mean, set_mut, , avg_success, avg_bounce,
-            plot_title = "Cooperation Success Phase Space",
-            plot_subtitle = "Tile color indicates average success. Circle size indicates volatility.",
-            x_label = "Total sets (M)",
-            y_label = "Set mean (K)",
-            fill_label = "Coop Success",
-            size_label = "Volatility")
-ggsave("Graphs/mvk_u0_x1_heatmap.png", width = 8, height = 6, dpi = 300)
-
-# TRAIT MUTATION, NO DIRECTED EXPLORATION
-mvk_heatmap <- mvk_summ |>
-  filter(trait_mut == 0.15, dir_exp == 0) |> 
-  # Average multiple runs for each parameter combination
-  group_by(total_sets, set_mean, set_mut) |>
-  summarise(
-    avg_success = mean(coop_success, na.rm = TRUE),
-    avg_bounce = mean(bounce_back, na.rm = TRUE),
-    .groups = "drop"
-  )
-
-phase_space(mvk_heatmap, total_sets, set_mean, set_mut, , avg_success, avg_bounce,
-            plot_title = "Cooperation Success Phase Space",
-            plot_subtitle = "Tile color indicates average success. Circle size indicates volatility.",
-            x_label = "Total sets (M)",
-            y_label = "Set mean (K)",
-            fill_label = "Coop Success",
-            size_label = "Volatility")
-ggsave("Graphs/mvk_u0_x0_heatmap.png", width = 8, height = 6, dpi = 300)
-
-# TRAIT MUTATION, DIRECTED EXPLORATION
-mvk_heatmap <- mvk_summ |>
-  filter(trait_mut == 0.30, dir_exp == 1) |> 
-  # Average multiple runs for each parameter combination
-  group_by(total_sets, set_mean, set_mut) |>
-  summarise(
-    avg_success = mean(coop_success, na.rm = TRUE),
-    avg_bounce = mean(bounce_back, na.rm = TRUE),
-    .groups = "drop"
-  )
-
-phase_space(mvk_heatmap, total_sets, set_mean, set_mut, , avg_success, avg_bounce,
-            plot_title = "Cooperation Success Phase Space",
-            plot_subtitle = "Tile color indicates average success. Circle size indicates volatility.",
-            x_label = "Total sets (M)",
-            y_label = "Set mean (K)",
-            fill_label = "Coop Success",
-            size_label = "Volatility")
-ggsave("Graphs/mvk_u0_x1_heatmap.png", width = 8, height = 6, dpi = 300)
-
-
-# # # # # # # # 
-# SET STD TEST
-# # # # # # # # 
-
-# test_heatmap <- test_summ |>
-#   group_by(set_mut, set_std, dir_exp) |>
+# # ==== SUCCESS HEATMAP ====
+# 
+# # # # # # # # # # # # # # # # # # # # # # # # # #
+# # SYNERGY VS BENEFIT WITHOUT DIRECTED EXPLORATION
+# # # # # # # # # # # # # # # # # # # # # # # # # #
+# 
+# svb_x0_heatmap <- svb_x0_summ |>
+#   group_by(synergy, benefit, set_mut) |>
 #   summarise(
 #     avg_success = mean(coop_success, na.rm = TRUE),
 #     avg_bounce = mean(bounce_back, na.rm = TRUE),
 #     .groups = "drop"
 #   )
 # 
-# phase_space(test_heatmap, set_std, set_mut, dir_exp, , avg_success, avg_bounce,
+# phase_space(svb_heatmap, synergy, benefit, set_mut, avg_success, avg_bounce,
 #             plot_title = "Cooperation Success Phase Space",
 #             plot_subtitle = "Tile color indicates average success. Circle size indicates volatility.",
-#             x_label = "",
-#             y_label = "",
+#             x_label = "Synergy (s)",
+#             y_label = "Benefit (b)",
 #             fill_label = "Coop Success",
 #             size_label = "Volatility")
 # ggsave("Graphs/svb_x0_heatmap.png", width = 8, height = 6, dpi = 300)
-
-# # # # # # # # # # # # # # # # # # 
-# KM RATIO VS BC RATIO BY SET X = 0
-# # # # # # # # # # # # # # # # # # 
-
-s0x0_heatmap <- s_0_summ |>
-  filter(dir_exp == 0, set_mut != 0.5) |> 
-  group_by(K_M_ratio, b_c_ratio, set_mut) |>
-  summarise(
-    avg_success = mean(coop_success, na.rm = TRUE),
-    avg_bounce = mean(bounce_back, na.rm = TRUE),
-    .groups = "drop"
-  )
-
-phase_space(s0x0_heatmap, K_M_ratio, b_c_ratio, set_mut, , avg_success, avg_bounce,
-            plot_title = "Cooperation Success Phase Space",
-            plot_subtitle = "Tile color indicates average success. Circle size indicates volatility.",
-            x_label = "Synergy (s)",
-            y_label = "Benefit (b)",
-            fill_label = "Coop Success",
-            size_label = "Volatility")
-ggsave("Graphs/s0x0_heatmap.png", width = 8, height = 6, dpi = 300)
-
-# # # # # # # # # # # # # # # # # # 
-# KM RATIO VS BC RATIO BY SET X = 0
-# # # # # # # # # # # # # # # # # # 
-
-s0x1_heatmap <- s_0_summ |>
-  filter(dir_exp == 1, set_mut != 0.5) |> 
-  group_by(K_M_ratio, b_c_ratio, set_mut) |>
-  summarise(
-    avg_success = mean(coop_success, na.rm = TRUE),
-    avg_bounce = mean(bounce_back, na.rm = TRUE),
-    .groups = "drop"
-  )
-
-phase_space(s0x1_heatmap, K_M_ratio, b_c_ratio, set_mut, , avg_success, avg_bounce,
-            plot_title = "Cooperation Success Phase Space",
-            plot_subtitle = "Tile color indicates average success. Circle size indicates volatility.",
-            x_label = "Synergy (s)",
-            y_label = "Benefit (b)",
-            fill_label = "Coop Success",
-            size_label = "Volatility")
-ggsave("Graphs/s0x1_heatmap.png", width = 8, height = 6, dpi = 300)
-
-# ====
-# ==== DOT GRID ====
-
-# SET MUTATION 0
-run_metrics <- svb_x0 |>
-  group_by(b_c_ratio, synergy, set_mut) |>
-  summarise(
-    mean_coop = mean(coop_freq, na.rm = TRUE),
-    std_coop = sd(coop_freq, na.rm = TRUE),
-    .groups = 'drop'
-  )
-
-# 2. Aggregate across all runs for a given parameter combination
-# (Alternatively, you can plot run_metrics directly with position_jitter 
-# to see every individual run instead of the aggregate)
-grid_data <- run_metrics |>
-  group_by(set_mean, total_sets, population) |>
-  summarise(
-    avg_mean_coop = mean(mean_coop, na.rm = TRUE),
-    avg_std_coop = mean(std_coop, na.rm = TRUE),
-    .groups = 'drop'
-  )
-
-# 3. Plot the dot grid
-ggplot(grid_data, aes(x = factor(set_mean), y = factor(total_sets))) +
-  geom_point(aes(size = avg_std_coop, color = avg_mean_coop)) +
-  facet_wrap(~ population, labeller = as_labeller(function(x) paste("Population:", x))) +
-  scale_color_viridis_c(option = "plasma", limits = c(0, 1)) +
-  scale_size_continuous(range = c(3, 12)) + # Adjusts minimum and maximum bubble sizes
-  labs(
-    title = "Cooperation Dynamics: Mean and Volatility",
-    subtitle = "Color = Average Cooperation | Size = Volatility (Std. Dev.)",
-    x = "Mean Sets per Agent (set_mean)",
-    y = "Total Sets Available (total_sets)",
-    color = "Mean Coop\nFreq",
-    size = "Std Dev\n(Volatility)"
-  ) +
-  theme_minimal(base_size = 14) +
-  theme(
-    plot.background = element_rect(fill = "#FEFCF5", color = NA),
-    panel.background = element_rect(fill = "#FEFCF5", color = NA),
-    panel.grid.major = element_line(color = "grey85", linewidth = 0.5, linetype = "dashed"),
-    strip.background = element_rect(fill = "grey90", color = NA),
-    strip.text = element_text(face = "bold", size = 12)
-  )
-
-
-
-# ====
-# ==== SUCCESS HEATMAP ALTERNATIVE ====
-
-ggplot(heatmap_data, aes(x = factor(synergy), y = factor(b_c_ratio))) +
-  # The background tiles
-  geom_tile(aes(fill = avg_success), color = "white", linewidth = 0.5) +
-  
-  # The bounce-back circles
-  # We map color to avg_success as well, but we will reverse the palette later!
-  geom_point(
-    aes(size = avg_bounce, color = "#EE4B2B"), # put avg_success here for viridis mode
-    show.legend = c(size = TRUE, color = FALSE) # Hide the point color legend
-  ) +
-  
-  scale_fill_gradient(low = "black", high = "white", name = "Coop Success", limits = c(0, 1)) +
-  scale_size_continuous(name = "Bounce Back", range = c(0, 6)) +
-  # scale_fill_viridis_c(name = "Coop Success", limits = c(0, 1)) + # to change to viridis
-  # scale_color_viridis_c(direction = -1, limits = c(0, 1)) +
-  
-  labs(
-    title = "Cooperation Success Phase Space",
-    subtitle = "Tile color indicates average success. Circle size indicates post-resolution volatility.",
-    x = "Synergy (s)",
-    y = "b_c_ratio (b)"
-  ) +
-  theme_minimal() +
-  theme(
-    panel.grid = element_blank(), # Removes grid lines to make tiles pop
-    axis.text = element_text(size = 10)
-  ) +
-  facet_wrap(~ set_mut, labeller = label_both)
-# ==== 
-
-
-# ==== CHECK RUN LENGTH ====
-# 1. Keep only the row with the maximum step per runhttp://127.0.0.1:20622/graphics/plot_zoom_png?width=1184&height=861
-df_max_steps <- svb_x0 |>
-  filter(b_c_ratio == 0.2, synergy == 0.66, set_mut == 0.5) |> 
-  group_by(run_number) |>
-  slice_max(step, n = 1, with_ties = FALSE) |>
-  ungroup()
-
-# 2. Plot as horizontal columns
-ggplot(df_max_steps, aes(x = step, y = reorder(factor(run_number), step))) +
-  geom_col(fill = "steelblue") +
-  labs(
-    title = "Maximum Step Reached by Run",
-    x = "Maximum Step Reached",
-    y = "Run Number"
-  ) +
-  theme_minimal()
-
-# ====
-# ==== COOP PLOT ====
-
-svb_x0 |>
-  filter(run_number == 394) |> 
-  ggplot(aes(x = step, color = run_number)) +
-  geom_line(aes(y = coop_freq, linetype = "Cooperator Frequency"), linewidth = 1.2, alpha = 0.85) +
-  geom_line(aes(y = variance_ratio, linetype = "Variance Ratio"), linewidth = 1.2, alpha = 0.85) +
-  scale_color_viridis_d(option = "mako", end = 0.9) +
-  scale_linetype_manual(values = c("Cooperator Frequency" = "solid", "Variance Ratio" = "dashed")) +
-  scale_y_continuous(limits = c(NA, 1), expand = expansion(mult = c(0, 0.05))) +
-  labs(
-    subtitle ="",
-    x = "Simulation Step",
-    y = "Value",
-    color = NULL,
-    linetype = NULL
-  ) +
-  theme_minimal(base_size = 14) +
-  theme(
-    plot.title = element_text(face = "bold", size = 18, margin = margin(b = 5)),
-    plot.subtitle = element_text(color = "grey40", size = 12, margin = margin(b = 15)),
-    legend.position = "top",
-    legend.justification = "left",
-    legend.text = element_text(size = 11),
-    panel.grid.minor = element_blank(), 
-    panel.grid.major = element_line(color = "grey90", linewidth = 0.5),
-    axis.text = element_text(color = "grey30"),
-    axis.title = element_text(face = "bold", margin = margin(t = 10, r = 10)),
-    plot.background = element_rect(fill = "#FEFCF5", color = NA), 
-    panel.background = element_rect(fill = "#FEFCF5", color = NA)
-  )
-# ====
+# 
+# # # # # # # # # # # # # # # # # # # # # # # # #
+# # SYNERGY VS BENEFIT WITH DIRECTED EXPLORATION
+# # # # # # # # # # # # # # # # # # # # # # # # # 
+# 
+# svb_x1_heatmap <- svb_x1_summ |>
+#   # Average multiple runs for each parameter combination
+#   group_by(synergy, benefit, set_mut) |>
+#   summarise(
+#     avg_success = mean(coop_success, na.rm = TRUE),
+#     avg_bounce = mean(bounce_back, na.rm = TRUE),
+#     .groups = "drop"
+#   )
+# 
+# phase_space(svb_heatmap, synergy, benefit, avg_success, avg_bounce)
+# ggsave("Graphs/svb_x1_heatmap.png", width = 8, height = 6, dpi = 300)
+# 
+# # # # # # # # # # # # # # # # # # #
+# # TOTAL SET NUMBER VERSUS SET MEAN
+# # # # # # # # # # # # # # # # # # #
+# 
+# # NO TRAIT MUTATION, NO DIRECTED EXPLORATION
+# mvk_heatmap <- mvk_summ |>
+#   filter(trait_mut == 0, dir_exp == 0) |> 
+#   # Average multiple runs for each parameter combination
+#   group_by(total_sets, set_mean, set_mut) |>
+#   summarise(
+#     avg_success = mean(coop_success, na.rm = TRUE),
+#     avg_bounce = mean(bounce_back, na.rm = TRUE),
+#     .groups = "drop"
+#   )
+# 
+# phase_space(mvk_heatmap, total_sets, set_mean, set_mut, , avg_success, avg_bounce,
+#             plot_title = "Cooperation Success Phase Space",
+#             plot_subtitle = "Tile color indicates average success. Circle size indicates volatility.",
+#             x_label = "Total sets (M)",
+#             y_label = "Set mean (K)",
+#             fill_label = "Coop Success",
+#             size_label = "Volatility")
+# ggsave("Graphs/mvk_u0_x0_heatmap.png", width = 8, height = 6, dpi = 300)
+# 
+# # NO TRAIT MUTATION, DIRECTED EXPLORATION
+# mvk_heatmap <- mvk_summ |>
+#   filter(trait_mut == 0, dir_exp == 1) |> 
+#   # Average multiple runs for each parameter combination
+#   group_by(total_sets, set_mean, set_mut) |>
+#   summarise(
+#     avg_success = mean(coop_success, na.rm = TRUE),
+#     avg_bounce = mean(bounce_back, na.rm = TRUE),
+#     .groups = "drop"
+#   )
+# 
+# phase_space(mvk_heatmap, total_sets, set_mean, set_mut, , avg_success, avg_bounce,
+#             plot_title = "Cooperation Success Phase Space",
+#             plot_subtitle = "Tile color indicates average success. Circle size indicates volatility.",
+#             x_label = "Total sets (M)",
+#             y_label = "Set mean (K)",
+#             fill_label = "Coop Success",
+#             size_label = "Volatility")
+# ggsave("Graphs/mvk_u0_x1_heatmap.png", width = 8, height = 6, dpi = 300)
+# 
+# # TRAIT MUTATION, NO DIRECTED EXPLORATION
+# mvk_heatmap <- mvk_summ |>
+#   filter(trait_mut == 0.15, dir_exp == 0) |> 
+#   # Average multiple runs for each parameter combination
+#   group_by(total_sets, set_mean, set_mut) |>
+#   summarise(
+#     avg_success = mean(coop_success, na.rm = TRUE),
+#     avg_bounce = mean(bounce_back, na.rm = TRUE),
+#     .groups = "drop"
+#   )
+# 
+# phase_space(mvk_heatmap, total_sets, set_mean, set_mut, , avg_success, avg_bounce,
+#             plot_title = "Cooperation Success Phase Space",
+#             plot_subtitle = "Tile color indicates average success. Circle size indicates volatility.",
+#             x_label = "Total sets (M)",
+#             y_label = "Set mean (K)",
+#             fill_label = "Coop Success",
+#             size_label = "Volatility")
+# ggsave("Graphs/mvk_u0_x0_heatmap.png", width = 8, height = 6, dpi = 300)
+# 
+# # TRAIT MUTATION, DIRECTED EXPLORATION
+# mvk_heatmap <- mvk_summ |>
+#   filter(trait_mut == 0.30, dir_exp == 1) |> 
+#   # Average multiple runs for each parameter combination
+#   group_by(total_sets, set_mean, set_mut) |>
+#   summarise(
+#     avg_success = mean(coop_success, na.rm = TRUE),
+#     avg_bounce = mean(bounce_back, na.rm = TRUE),
+#     .groups = "drop"
+#   )
+# 
+# phase_space(mvk_heatmap, total_sets, set_mean, set_mut, , avg_success, avg_bounce,
+#             plot_title = "Cooperation Success Phase Space",
+#             plot_subtitle = "Tile color indicates average success. Circle size indicates volatility.",
+#             x_label = "Total sets (M)",
+#             y_label = "Set mean (K)",
+#             fill_label = "Coop Success",
+#             size_label = "Volatility")
+# ggsave("Graphs/mvk_u0_x1_heatmap.png", width = 8, height = 6, dpi = 300)
+# 
+# 
+# # # # # # # # # 
+# # SET STD TEST
+# # # # # # # # # 
+# 
+# # test_heatmap <- test_summ |>
+# #   group_by(set_mut, set_std, dir_exp) |>
+# #   summarise(
+# #     avg_success = mean(coop_success, na.rm = TRUE),
+# #     avg_bounce = mean(bounce_back, na.rm = TRUE),
+# #     .groups = "drop"
+# #   )
+# # 
+# # phase_space(test_heatmap, set_std, set_mut, dir_exp, , avg_success, avg_bounce,
+# #             plot_title = "Cooperation Success Phase Space",
+# #             plot_subtitle = "Tile color indicates average success. Circle size indicates volatility.",
+# #             x_label = "",
+# #             y_label = "",
+# #             fill_label = "Coop Success",
+# #             size_label = "Volatility")
+# # ggsave("Graphs/svb_x0_heatmap.png", width = 8, height = 6, dpi = 300)
+# 
+# # # # # # # # # # # # # # # # # # # 
+# # KM RATIO VS BC RATIO BY SET X = 0
+# # # # # # # # # # # # # # # # # # # 
+# 
+# s0x0_heatmap <- s_0_summ |>
+#   filter(dir_exp == 0, set_mut != 0.5) |> 
+#   group_by(K_M_ratio, b_c_ratio, set_mut) |>
+#   summarise(
+#     avg_success = mean(coop_success, na.rm = TRUE),
+#     avg_bounce = mean(bounce_back, na.rm = TRUE),
+#     .groups = "drop"
+#   )
+# 
+# phase_space(s0x0_heatmap, K_M_ratio, b_c_ratio, set_mut, , avg_success, avg_bounce,
+#             plot_title = "Cooperation Success Phase Space",
+#             plot_subtitle = "Tile color indicates average success. Circle size indicates volatility.",
+#             x_label = "Synergy (s)",
+#             y_label = "Benefit (b)",
+#             fill_label = "Coop Success",
+#             size_label = "Volatility")
+# ggsave("Graphs/s0x0_heatmap.png", width = 8, height = 6, dpi = 300)
+# 
+# # # # # # # # # # # # # # # # # # # 
+# # KM RATIO VS BC RATIO BY SET X = 0
+# # # # # # # # # # # # # # # # # # # 
+# 
+# s0x1_heatmap <- s_0_summ |>
+#   filter(dir_exp == 1, set_mut != 0.5) |> 
+#   group_by(K_M_ratio, b_c_ratio, set_mut) |>
+#   summarise(
+#     avg_success = mean(coop_success, na.rm = TRUE),
+#     avg_bounce = mean(bounce_back, na.rm = TRUE),
+#     .groups = "drop"
+#   )
+# 
+# phase_space(s0x1_heatmap, K_M_ratio, b_c_ratio, set_mut, , avg_success, avg_bounce,
+#             plot_title = "Cooperation Success Phase Space",
+#             plot_subtitle = "Tile color indicates average success. Circle size indicates volatility.",
+#             x_label = "Synergy (s)",
+#             y_label = "Benefit (b)",
+#             fill_label = "Coop Success",
+#             size_label = "Volatility")
+# ggsave("Graphs/s0x1_heatmap.png", width = 8, height = 6, dpi = 300)
+# 
+# # ====
+# # ==== DOT GRID ====
+# 
+# # SET MUTATION 0
+# run_metrics <- svb_x0 |>
+#   group_by(b_c_ratio, synergy, set_mut) |>
+#   summarise(
+#     mean_coop = mean(coop_freq, na.rm = TRUE),
+#     std_coop = sd(coop_freq, na.rm = TRUE),
+#     .groups = 'drop'
+#   )
+# 
+# # 2. Aggregate across all runs for a given parameter combination
+# # (Alternatively, you can plot run_metrics directly with position_jitter 
+# # to see every individual run instead of the aggregate)
+# grid_data <- run_metrics |>
+#   group_by(set_mean, total_sets, population) |>
+#   summarise(
+#     avg_mean_coop = mean(mean_coop, na.rm = TRUE),
+#     avg_std_coop = mean(std_coop, na.rm = TRUE),
+#     .groups = 'drop'
+#   )
+# 
+# # 3. Plot the dot grid
+# ggplot(grid_data, aes(x = factor(set_mean), y = factor(total_sets))) +
+#   geom_point(aes(size = avg_std_coop, color = avg_mean_coop)) +
+#   facet_wrap(~ population, labeller = as_labeller(function(x) paste("Population:", x))) +
+#   scale_color_viridis_c(option = "plasma", limits = c(0, 1)) +
+#   scale_size_continuous(range = c(3, 12)) + # Adjusts minimum and maximum bubble sizes
+#   labs(
+#     title = "Cooperation Dynamics: Mean and Volatility",
+#     subtitle = "Color = Average Cooperation | Size = Volatility (Std. Dev.)",
+#     x = "Mean Sets per Agent (set_mean)",
+#     y = "Total Sets Available (total_sets)",
+#     color = "Mean Coop\nFreq",
+#     size = "Std Dev\n(Volatility)"
+#   ) +
+#   theme_minimal(base_size = 14) +
+#   theme(
+#     plot.background = element_rect(fill = "#FEFCF5", color = NA),
+#     panel.background = element_rect(fill = "#FEFCF5", color = NA),
+#     panel.grid.major = element_line(color = "grey85", linewidth = 0.5, linetype = "dashed"),
+#     strip.background = element_rect(fill = "grey90", color = NA),
+#     strip.text = element_text(face = "bold", size = 12)
+#   )
+# 
+# 
+# 
+# # ====
+# # ==== SUCCESS HEATMAP ALTERNATIVE ====
+# 
+# ggplot(heatmap_data, aes(x = factor(synergy), y = factor(b_c_ratio))) +
+#   # The background tiles
+#   geom_tile(aes(fill = avg_success), color = "white", linewidth = 0.5) +
+#   
+#   # The bounce-back circles
+#   # We map color to avg_success as well, but we will reverse the palette later!
+#   geom_point(
+#     aes(size = avg_bounce, color = "#EE4B2B"), # put avg_success here for viridis mode
+#     show.legend = c(size = TRUE, color = FALSE) # Hide the point color legend
+#   ) +
+#   
+#   scale_fill_gradient(low = "black", high = "white", name = "Coop Success", limits = c(0, 1)) +
+#   scale_size_continuous(name = "Bounce Back", range = c(0, 6)) +
+#   # scale_fill_viridis_c(name = "Coop Success", limits = c(0, 1)) + # to change to viridis
+#   # scale_color_viridis_c(direction = -1, limits = c(0, 1)) +
+#   
+#   labs(
+#     title = "Cooperation Success Phase Space",
+#     subtitle = "Tile color indicates average success. Circle size indicates post-resolution volatility.",
+#     x = "Synergy (s)",
+#     y = "b_c_ratio (b)"
+#   ) +
+#   theme_minimal() +
+#   theme(
+#     panel.grid = element_blank(), # Removes grid lines to make tiles pop
+#     axis.text = element_text(size = 10)
+#   ) +
+#   facet_wrap(~ set_mut, labeller = label_both)
+# # ==== 
+# 
+# 
+# # ==== CHECK RUN LENGTH ====
+# # 1. Keep only the row with the maximum step per runhttp://127.0.0.1:20622/graphics/plot_zoom_png?width=1184&height=861
+# df_max_steps <- svb_x0 |>
+#   filter(b_c_ratio == 0.2, synergy == 0.66, set_mut == 0.5) |> 
+#   group_by(run_number) |>
+#   slice_max(step, n = 1, with_ties = FALSE) |>
+#   ungroup()
+# 
+# # 2. Plot as horizontal columns
+# ggplot(df_max_steps, aes(x = step, y = reorder(factor(run_number), step))) +
+#   geom_col(fill = "steelblue") +
+#   labs(
+#     title = "Maximum Step Reached by Run",
+#     x = "Maximum Step Reached",
+#     y = "Run Number"
+#   ) +
+#   theme_minimal()
+# 
+# # ====
+# # ==== COOP PLOT ====
+# 
+# svb_x0 |>
+#   filter(run_number == 394) |> 
+#   ggplot(aes(x = step, color = run_number)) +
+#   geom_line(aes(y = coop_freq, linetype = "Cooperator Frequency"), linewidth = 1.2, alpha = 0.85) +
+#   geom_line(aes(y = variance_ratio, linetype = "Variance Ratio"), linewidth = 1.2, alpha = 0.85) +
+#   scale_color_viridis_d(option = "mako", end = 0.9) +
+#   scale_linetype_manual(values = c("Cooperator Frequency" = "solid", "Variance Ratio" = "dashed")) +
+#   scale_y_continuous(limits = c(NA, 1), expand = expansion(mult = c(0, 0.05))) +
+#   labs(
+#     subtitle ="",
+#     x = "Simulation Step",
+#     y = "Value",
+#     color = NULL,
+#     linetype = NULL
+#   ) +
+#   theme_minimal(base_size = 14) +
+#   theme(
+#     plot.title = element_text(face = "bold", size = 18, margin = margin(b = 5)),
+#     plot.subtitle = element_text(color = "grey40", size = 12, margin = margin(b = 15)),
+#     legend.position = "top",
+#     legend.justification = "left",
+#     legend.text = element_text(size = 11),
+#     panel.grid.minor = element_blank(), 
+#     panel.grid.major = element_line(color = "grey90", linewidth = 0.5),
+#     axis.text = element_text(color = "grey30"),
+#     axis.title = element_text(face = "bold", margin = margin(t = 10, r = 10)),
+#     plot.background = element_rect(fill = "#FEFCF5", color = NA), 
+#     panel.background = element_rect(fill = "#FEFCF5", color = NA)
+#   )
+# # ====
